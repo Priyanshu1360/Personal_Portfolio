@@ -1,5 +1,7 @@
 # 🚀 Priyanshu Parihar — AI/ML Engineer Portfolio
 
+![Portfolio Thumbnail](public/thumbnail.png)
+
 > A modern, interactive personal portfolio built with **Next.js 16**, **TypeScript**, **Tailwind CSS**, and **Three.js** — showcasing my expertise in AI/ML engineering, RAG systems, and LLM development.
 
 ---

@@ -55,6 +55,55 @@ export default function Chatbot() {
     handleSend(q);
   };
 
+  // Render message with bullet points and bold text formatting
+  const renderMessage = (content: string) => {
+    const lines = content.split('\n');
+    return (
+      <div className="space-y-1">
+        {lines.map((line, i) => {
+          // Bullet point lines
+          if (line.trim().startsWith('- ') || line.trim().startsWith('• ') || line.trim().startsWith('* ')) {
+            const text = line.trim().slice(2);
+            return (
+              <div key={i} className="flex items-start gap-2">
+                <span className="text-[#00d4ff] mt-1 shrink-0 font-bold">▸</span>
+                <span className="text-white font-medium leading-snug">{text}</span>
+              </div>
+            );
+          }
+          // Numbered lines like "1. ..."
+          if (/^\d+\.\s/.test(line.trim())) {
+            const num = line.trim().match(/^(\d+\.)/)?.[1] ?? '';
+            const text = line.trim().slice(num.length).trim();
+            return (
+              <div key={i} className="flex items-start gap-2">
+                <span className="text-[#7b2fff] font-bold shrink-0">{num}</span>
+                <span className="text-white font-medium leading-snug">{text}</span>
+              </div>
+            );
+          }
+          // Bold **text** pattern
+          if (line.includes('**')) {
+            const parts = line.split('**');
+            return (
+              <p key={i} className="text-white font-medium leading-relaxed">
+                {parts.map((part, j) =>
+                  j % 2 === 1
+                    ? <strong key={j} className="text-[#00d4ff] font-bold">{part}</strong>
+                    : <span key={j}>{part}</span>
+                )}
+              </p>
+            );
+          }
+          // Empty line = spacer
+          if (line.trim() === '') return <div key={i} className="h-1" />;
+          // Normal line
+          return <p key={i} className="text-white font-medium leading-relaxed">{line}</p>;
+        })}
+      </div>
+    );
+  };
+
   return (
     <div className="fixed bottom-6 right-6 z-50">
       <AnimatePresence>
@@ -101,10 +150,10 @@ export default function Chatbot() {
                   )}
                   <div className={`max-w-[80%] rounded-2xl p-3 text-sm ${
                     msg.role === "user" 
-                      ? "bg-gradient-to-r from-[#00d4ff]/20 to-[#7b2fff]/20 border border-white/10 text-white rounded-tr-sm" 
-                      : "glass-panel text-gray-200 rounded-tl-sm"
+                      ? "bg-gradient-to-r from-[#00d4ff]/20 to-[#7b2fff]/20 border border-white/10 text-white font-semibold rounded-tr-sm" 
+                      : "bg-[#0d1428] border border-[#00d4ff]/20 rounded-tl-sm shadow-[inset_0_0_20px_rgba(0,212,255,0.05)]"
                   }`}>
-                    {msg.content}
+                    {msg.role === "assistant" ? renderMessage(msg.content) : <span className="text-white font-semibold">{msg.content}</span>}
                   </div>
                 </div>
               ))}

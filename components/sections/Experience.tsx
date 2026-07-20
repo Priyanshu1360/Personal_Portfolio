@@ -33,7 +33,7 @@ export default function Experience() {
           >
             {/* Left side (Date for Desktop, empty for mobile handled by flex) */}
             <div className="hidden md:flex md:w-[45%] justify-end pr-8">
-              <span className="text-[#00d4ff] font-semibold text-lg tracking-wide uppercase">March 2026 – Present</span>
+              <span className="text-[#00d4ff] font-semibold text-lg tracking-wide uppercase">March 2026 – July 2026</span>
             </div>
 
             {/* Timeline Icon */}
@@ -46,7 +46,7 @@ export default function Experience() {
             {/* Right side (Card Content) */}
             <div className="w-full md:w-[45%] md:pl-8">
               <div className="glass p-6 md:p-8 rounded-3xl hover:bg-white/5 transition-colors group">
-                <span className="md:hidden text-[#00d4ff] font-semibold text-sm tracking-wide uppercase mb-2 block">March 2026 – Present</span>
+                <span className="md:hidden text-[#00d4ff] font-semibold text-sm tracking-wide uppercase mb-2 block">March 2026 – July 2026</span>
                 <h3 className="text-2xl font-bold text-white mb-1">AI/ML Engineer Intern</h3>
                 <h4 className="text-lg text-gray-400 mb-4 font-medium">Mobcoder</h4>
                 <p className="text-gray-300 leading-relaxed group-hover:text-white transition-colors mb-3">

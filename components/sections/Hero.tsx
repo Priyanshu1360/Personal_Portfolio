@@ -230,10 +230,10 @@ export default function Hero() {
             </a>
             <a 
               href="/Priyanshu_Parihar_Resume.pdf" 
-              target="_blank"
-              className="px-8 py-4 rounded-full glass font-semibold text-lg hover:bg-white/10 transition-all transform hover:-translate-y-1 text-white border border-white/20"
+              download="Priyanshu_Parihar_Resume.pdf"
+              className="px-8 py-4 rounded-full glass font-semibold text-lg hover:bg-white/10 transition-all transform hover:-translate-y-1 text-white border border-white/20 flex items-center gap-2"
             >
-              Download Resume
+              ⬇ Download Resume
             </a>
           </motion.div>
         </motion.div>
