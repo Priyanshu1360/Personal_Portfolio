@@ -229,7 +229,7 @@ export default function Hero() {
               View My Work
             </a>
             <a 
-              href="/Priyanshu_Parihar_Resume.pdf" 
+              href="/Priyanshu_resume.pdf" 
               download="Priyanshu_Parihar_Resume.pdf"
               className="px-8 py-4 rounded-full glass font-semibold text-lg hover:bg-white/10 transition-all transform hover:-translate-y-1 text-white border border-white/20 flex items-center gap-2"
             >
