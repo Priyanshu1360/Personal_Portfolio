@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Typewriter } from "react-simple-typewriter";
 
@@ -50,7 +50,6 @@ function TerminalLine({ text, color, charDelay = 28 }: { text: string; color: st
 function HeroTerminal() {
   const [visibleLines, setVisibleLines] = useState<typeof TERMINAL_LINES>([]);
   const [cycleKey, setCycleKey] = useState(0);
-  const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setVisibleLines([]);
@@ -59,7 +58,6 @@ function HeroTerminal() {
     TERMINAL_LINES.forEach((line, idx) => {
       const t = setTimeout(() => {
         setVisibleLines(prev => [...prev, line]);
-        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
       }, line.delay);
       timers.push(t);
     });
@@ -120,7 +118,6 @@ function HeroTerminal() {
             {visibleLines.map((line, i) => (
               <TerminalLine key={`${cycleKey}-${i}`} text={line.text} color={line.color} charDelay={i < 3 ? 20 : 25} />
             ))}
-            <div ref={bottomRef} />
           </div>
         </div>
       </motion.div>
