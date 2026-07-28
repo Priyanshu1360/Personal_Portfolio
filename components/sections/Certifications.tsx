@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Award, Code2, Monitor, Trophy } from "lucide-react";
+import { Award, Code2, Monitor, Trophy, BookOpen, Cpu } from "lucide-react";
 
 const certs = [
   {
@@ -13,12 +13,20 @@ const certs = [
     border: "group-hover:border-[#00d4ff]/50"
   },
   {
-    title: "OOSC Conference",
-    issuer: "IIT Kanpur (Sep 2025)",
-    link: "https://hostwebs.site/LkOnu0",
-    icon: <Trophy className="text-[#7b2fff]" size={28} />,
+    title: "Oracle Certified AI Foundations Associate",
+    issuer: "Oracle (Verification Link)",
+    link: "https://hostwebs.site/ZT3FPH",
+    icon: <Cpu className="text-[#7b2fff]" size={28} />,
     color: "from-[#7b2fff]/20 to-transparent",
     border: "group-hover:border-[#7b2fff]/50"
+  },
+  {
+    title: "OOSC Conference — IIT Kanpur",
+    issuer: "IIT Kanpur (Sep 2025)",
+    link: "https://hostwebs.site/LkOnu0",
+    icon: <Trophy className="text-[#f59e0b]" size={28} />,
+    color: "from-[#f59e0b]/20 to-transparent",
+    border: "group-hover:border-[#f59e0b]/50"
   },
   {
     title: "Responsive Web Design",
@@ -35,7 +43,15 @@ const certs = [
     icon: <Code2 className="text-[#7b2fff]" size={28} />,
     color: "from-[#7b2fff]/20 to-transparent",
     border: "group-hover:border-[#7b2fff]/50"
-  }
+  },
+  {
+    title: "View All Certifications",
+    issuer: "Resume PDF",
+    link: "/Priyanshu_resume.pdf",
+    icon: <BookOpen className="text-[#4ade80]" size={28} />,
+    color: "from-[#4ade80]/20 to-transparent",
+    border: "group-hover:border-[#4ade80]/50"
+  },
 ];
 
 const containerVariants = {
@@ -68,7 +84,7 @@ export default function Certifications() {
         </motion.div>
 
         <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -83,14 +99,17 @@ export default function Certifications() {
                 href={cert.link} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className={`glass p-6 rounded-3xl flex items-center gap-6 group transition-all duration-300 block w-full hover:-translate-y-1 ${cert.border}`}
+                className={`glass p-6 rounded-3xl flex items-center gap-6 group transition-all duration-300 block w-full hover:-translate-y-1 border border-white/10 ${cert.border}`}
               >
-                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${cert.color} border border-white/10 flex items-center justify-center shrink-0`}>
+                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${cert.color} border border-white/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
                   {cert.icon}
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-white mb-1 group-hover:text-gradient transition-all">{cert.title}</h3>
-                  <p className="text-gray-400 font-medium">{cert.issuer}</p>
+                  <h3 className="text-lg font-bold text-white mb-1 group-hover:text-gradient transition-all leading-tight">{cert.title}</h3>
+                  <p className="text-gray-400 text-sm font-medium flex items-center gap-1">
+                    {cert.issuer}
+                    <span className="ml-1 text-[#00d4ff] text-xs opacity-0 group-hover:opacity-100 transition-opacity">→ View</span>
+                  </p>
                 </div>
               </a>
             </motion.div>

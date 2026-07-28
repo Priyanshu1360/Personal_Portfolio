@@ -50,7 +50,7 @@ export default function Experience() {
                 <h3 className="text-2xl font-bold text-white mb-1">AI/ML Engineer Intern</h3>
                 <h4 className="text-lg text-gray-400 mb-4 font-medium">Mobcoder</h4>
                 <p className="text-gray-300 leading-relaxed group-hover:text-white transition-colors mb-3">
-                  Built and deployed <span className="text-[#00d4ff] font-semibold">two production-grade RAG platforms</span> spanning the financial and healthcare domains.
+                  Built and deployed <span className="text-[#00d4ff] font-semibold">three production-grade RAG platforms</span> spanning financial, healthcare, and enterprise knowledge intelligence domains.
                 </p>
                 <p className="text-gray-300 leading-relaxed group-hover:text-white transition-colors">
                   Worked across the AI stack — retrieval pipelines, agentic orchestration, vector/graph databases, and safety guardrails — to ship secure, low-latency conversational AI systems.

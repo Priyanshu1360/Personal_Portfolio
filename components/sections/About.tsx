@@ -103,8 +103,8 @@ export default function About() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <AnimatedCounter value={2} title="Production RAGs" />
-              <AnimatedCounter value={2} title="LLMs Deployed" />
+              <AnimatedCounter value={3} title="Production RAGs" />
+              <AnimatedCounter value={3} title="LLMs Deployed" />
               <AnimatedCounter value={1} title="Internship" />
               <AnimatedCounter value={8.77} title="CGPA" isDecimal />
             </div>

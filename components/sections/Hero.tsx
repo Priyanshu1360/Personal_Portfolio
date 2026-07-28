@@ -1,179 +1,154 @@
 "use client";
 
-import { useRef, useMemo, useEffect } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Html, Line, Float } from "@react-three/drei";
+import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Typewriter } from "react-simple-typewriter";
-import * as THREE from "three";
 
-// Moving Data Packet Component
-function DataPacket({ start, end, color, speed = 0.5, offset = 0 }: { start: THREE.Vector3, end: THREE.Vector3, color: string, speed?: number, offset?: number }) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  
-  useFrame((state) => {
-    if (meshRef.current) {
-      const t = (state.clock.elapsedTime * speed + offset) % 1;
-      meshRef.current.position.lerpVectors(start, end, t);
-      // Optional scale pulse
-      const scale = Math.sin(t * Math.PI) * 1.5;
-      meshRef.current.scale.set(scale, scale, scale);
-    }
-  });
+// --- 3D Terminal Component ---
+const TERMINAL_LINES = [
+  { text: "> Initializing RAG Pipeline...", color: "#00d4ff", delay: 0 },
+  { text: "  [✓] Loading LLaMA-3.3-70B weights", color: "#4ade80", delay: 400 },
+  { text: "  [✓] Connecting to Qdrant vector store", color: "#4ade80", delay: 800 },
+  { text: "  [✓] Bootstrapping LangGraph agentic loop", color: "#4ade80", delay: 1200 },
+  { text: "> Running Self-Correction Grader...", color: "#00d4ff", delay: 1800 },
+  { text: "  hallucination_rate: 40% → 8.2%", color: "#f59e0b", delay: 2200 },
+  { text: "  refusal_accuracy:   15% → 91.4%", color: "#f59e0b", delay: 2600 },
+  { text: "  latency_p99:        0.04s ⚡", color: "#f59e0b", delay: 3000 },
+  { text: "> Applying Guardrails AI...", color: "#00d4ff", delay: 3600 },
+  { text: "  [✓] PII masking enabled", color: "#4ade80", delay: 4000 },
+  { text: "  [✓] Prompt-injection defense active", color: "#4ade80", delay: 4400 },
+  { text: "  [✓] Semantic cache warmed (0.04s hit)", color: "#4ade80", delay: 4800 },
+  { text: "> System ready. All checks passed ✓", color: "#7b2fff", delay: 5400 },
+  { text: "  Status: PRODUCTION_ONLINE", color: "#4ade80", delay: 5800 },
+];
+
+function TerminalLine({ text, color, charDelay = 28 }: { text: string; color: string; charDelay?: number }) {
+  const [displayed, setDisplayed] = useState("");
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    let i = 0;
+    const interval = setInterval(() => {
+      setDisplayed(text.slice(0, i + 1));
+      i++;
+      if (i >= text.length) {
+        clearInterval(interval);
+        setDone(true);
+      }
+    }, charDelay);
+    return () => clearInterval(interval);
+  }, [text, charDelay]);
 
   return (
-    <mesh ref={meshRef}>
-      <sphereGeometry args={[0.08, 16, 16]} />
-      <meshBasicMaterial color={color} />
-    </mesh>
+    <p style={{ color }} className="font-mono text-xs sm:text-sm leading-relaxed">
+      {displayed}
+      {!done && <span className="animate-pulse">▌</span>}
+    </p>
   );
 }
 
-// Scene containing the RAG Pipeline elements
-function RAGScene() {
-  const groupRef = useRef<THREE.Group>(null);
-  
-  // Define positions for architecture nodes
-  const docPos = useMemo(() => new THREE.Vector3(-2.5, 2, 0), []);
-  const dbPos = useMemo(() => new THREE.Vector3(-2, -1.5, 1), []);
-  const llmPos = useMemo(() => new THREE.Vector3(2, 1, 0), []);
-  const outputPos = useMemo(() => new THREE.Vector3(2.5, -2, 1), []);
+function HeroTerminal() {
+  const [visibleLines, setVisibleLines] = useState<typeof TERMINAL_LINES>([]);
+  const [cycleKey, setCycleKey] = useState(0);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
-  useFrame((state) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.1) * 0.2;
-      groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.15) * 0.1;
-    }
-  });
+  useEffect(() => {
+    setVisibleLines([]);
+    const timers: ReturnType<typeof setTimeout>[] = [];
 
-  return (
-    <group ref={groupRef}>
-      <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
-        {/* Connecting Lines */}
-        <Line points={[docPos, dbPos]} color="#ffffff" lineWidth={1} transparent opacity={0.3} />
-        <Line points={[dbPos, llmPos]} color="#7b2fff" lineWidth={1} transparent opacity={0.3} />
-        <Line points={[llmPos, outputPos]} color="#00d4ff" lineWidth={1} transparent opacity={0.3} />
-        
-        {/* Document Node */}
-        <mesh position={docPos}>
-          <boxGeometry args={[0.8, 1, 0.1]} />
-          <meshStandardMaterial color="#ffffff" wireframe transparent opacity={0.6} />
-          <Html position={[0, -0.8, 0]} center className="pointer-events-none">
-            <div className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/20 text-white text-xs font-mono whitespace-nowrap backdrop-blur-md">Raw PDFs</div>
-          </Html>
-        </mesh>
+    TERMINAL_LINES.forEach((line, idx) => {
+      const t = setTimeout(() => {
+        setVisibleLines(prev => [...prev, line]);
+        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, line.delay);
+      timers.push(t);
+    });
 
-        {/* Vector DB Node */}
-        <mesh position={dbPos}>
-          <cylinderGeometry args={[0.6, 0.6, 1.2, 16]} />
-          <meshStandardMaterial color="#7b2fff" wireframe emissive="#7b2fff" emissiveIntensity={0.2} />
-          <Html position={[0, -1.1, 0]} center className="pointer-events-none">
-            <div className="px-3 py-1.5 rounded-lg bg-[#7b2fff]/10 border border-[#7b2fff]/30 text-[#a78bfa] text-xs font-mono whitespace-nowrap backdrop-blur-md">Vector Database</div>
-          </Html>
-        </mesh>
+    // After last line + pause, restart cycle
+    const lastDelay = TERMINAL_LINES[TERMINAL_LINES.length - 1].delay;
+    const restartTimer = setTimeout(() => {
+      setCycleKey(k => k + 1);
+    }, lastDelay + 3500);
+    timers.push(restartTimer);
 
-        {/* LLM Node */}
-        <mesh position={llmPos}>
-          <icosahedronGeometry args={[0.9, 1]} />
-          <meshStandardMaterial color="#00d4ff" wireframe emissive="#00d4ff" emissiveIntensity={0.4} />
-          <Html position={[0, -1.4, 0]} center className="pointer-events-none">
-            <div className="px-3 py-1.5 rounded-lg bg-[#00d4ff]/10 border border-[#00d4ff]/30 text-[#67e8f9] text-xs font-mono whitespace-nowrap backdrop-blur-md">LLM (LLaMA-3)</div>
-          </Html>
-        </mesh>
-
-        {/* Output Node */}
-        <mesh position={outputPos}>
-          <sphereGeometry args={[0.4, 16, 16]} />
-          <meshStandardMaterial color="#4ade80" wireframe emissive="#4ade80" emissiveIntensity={0.5} />
-          <Html position={[0, -0.8, 0]} center className="pointer-events-none">
-            <div className="px-3 py-1.5 rounded-lg bg-[#4ade80]/10 border border-[#4ade80]/30 text-[#86efac] text-xs font-mono whitespace-nowrap backdrop-blur-md">Generated Insight</div>
-          </Html>
-        </mesh>
-
-        {/* Flowing Data Particles */}
-        <DataPacket start={docPos} end={dbPos} color="#ffffff" offset={0} />
-        <DataPacket start={docPos} end={dbPos} color="#ffffff" offset={0.5} />
-        
-        <DataPacket start={dbPos} end={llmPos} color="#7b2fff" offset={0.2} speed={0.4} />
-        <DataPacket start={dbPos} end={llmPos} color="#7b2fff" offset={0.7} speed={0.4} />
-        
-        <DataPacket start={llmPos} end={outputPos} color="#00d4ff" offset={0.1} speed={0.6} />
-        <DataPacket start={llmPos} end={outputPos} color="#00d4ff" offset={0.6} speed={0.6} />
-      </Float>
-    </group>
-  );
-}
-
-// Custom RAG Pipeline Animation Container
-function HeroRAGPipeline() {
-  return (
-    <div className="w-full h-[400px] lg:h-[650px] relative pointer-events-auto cursor-grab active:cursor-grabbing">
-      <Canvas camera={{ position: [0, 0, 8.5], fov: 50 }}>
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[10, 10, 5]} intensity={1} color="#00d4ff" />
-        <RAGScene />
-        <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={1} maxPolarAngle={Math.PI / 1.5} minPolarAngle={Math.PI / 3} />
-      </Canvas>
-    </div>
-  );
-}
-
-// Particle Network Background
-function ParticleNetwork() {
-  const count = 150;
-  const positions = useMemo(() => {
-    const pos = new Float32Array(count * 3);
-    for (let i = 0; i < count * 3; i++) {
-      pos[i] = (Math.random() - 0.5) * 15;
-    }
-    return pos;
-  }, [count]);
-
-  const pointsRef = useRef<THREE.Points>(null);
-
-  useFrame((state) => {
-    if (pointsRef.current) {
-      pointsRef.current.rotation.y = state.clock.elapsedTime * 0.05;
-      pointsRef.current.rotation.x = state.clock.elapsedTime * 0.02;
-    }
-  });
+    return () => timers.forEach(clearTimeout);
+  }, [cycleKey]);
 
   return (
-    <points ref={pointsRef}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          count={count}
-          args={[positions, 3]}
-          itemSize={3}
-        />
-      </bufferGeometry>
-      <pointsMaterial
-        size={0.05}
-        color="#00d4ff"
-        transparent
-        opacity={0.6}
-        sizeAttenuation
+    <div
+      className="w-full h-[420px] lg:h-[580px] relative"
+      style={{ perspective: "1000px" }}
+    >
+      {/* 3D tilt wrapper */}
+      <motion.div
+        className="w-full h-full"
+        style={{ transformStyle: "preserve-3d" }}
+        animate={{ rotateY: [2, -2, 2], rotateX: [1, -1, 1] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+      >
+        {/* Terminal window */}
+        <div className="w-full h-full rounded-2xl overflow-hidden border border-[#00d4ff]/30 shadow-[0_0_60px_rgba(0,212,255,0.2),0_0_120px_rgba(123,47,255,0.1)] flex flex-col"
+          style={{ background: "rgba(5,6,20,0.97)", backdropFilter: "blur(20px)" }}
+        >
+          {/* Title bar */}
+          <div className="flex items-center gap-2 px-4 py-3 border-b border-white/10"
+            style={{ background: "rgba(255,255,255,0.03)" }}
+          >
+            <span className="w-3 h-3 rounded-full bg-red-500/80" />
+            <span className="w-3 h-3 rounded-full bg-yellow-500/80" />
+            <span className="w-3 h-3 rounded-full bg-green-500/80" />
+            <span className="ml-3 text-xs text-gray-500 font-mono">priyanshu@rag-engine ~ python pipeline.py</span>
+            <div className="ml-auto flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+              <span className="text-xs text-green-400 font-mono">LIVE</span>
+            </div>
+          </div>
+
+          {/* Terminal body */}
+          <div className="flex-1 overflow-hidden p-4 space-y-1 relative">
+            {/* Scanline effect */}
+            <div className="absolute inset-0 pointer-events-none"
+              style={{
+                backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,212,255,0.015) 2px, rgba(0,212,255,0.015) 4px)",
+              }}
+            />
+            {/* Glow overlay */}
+            <div className="absolute inset-0 pointer-events-none"
+              style={{ background: "radial-gradient(ellipse at 50% 30%, rgba(0,212,255,0.05) 0%, transparent 70%)" }}
+            />
+
+            {visibleLines.map((line, i) => (
+              <TerminalLine key={`${cycleKey}-${i}`} text={line.text} color={line.color} charDelay={i < 3 ? 20 : 25} />
+            ))}
+            <div ref={bottomRef} />
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Ambient glow underneath */}
+      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-3/4 h-16 blur-2xl rounded-full opacity-40"
+        style={{ background: "linear-gradient(90deg, #00d4ff, #7b2fff)" }}
       />
-    </points>
+    </div>
   );
 }
 
 export default function Hero() {
   return (
     <section id="home" className="relative w-full min-h-screen flex items-center justify-center overflow-hidden">
-      {/* 3D Background */}
-      <div className="absolute inset-0 z-0 opacity-60 pointer-events-none">
-        <Canvas camera={{ position: [0, 0, 8], fov: 60 }}>
-          <ambientLight intensity={0.5} />
-          <pointLight position={[10, 10, 10]} intensity={1} color="#00d4ff" />
-          <ParticleNetwork />
-          <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} />
-        </Canvas>
-      </div>
+      {/* Animated background grid */}
+      <div className="absolute inset-0 z-0 pointer-events-none opacity-20"
+        style={{
+          backgroundImage: "linear-gradient(rgba(0,212,255,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,255,0.15) 1px, transparent 1px)",
+          backgroundSize: "60px 60px",
+        }}
+      />
+      {/* Ambient blobs */}
+      <div className="absolute top-1/4 left-0 w-96 h-96 bg-[#7b2fff] opacity-10 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-[#00d4ff] opacity-10 rounded-full blur-[100px] pointer-events-none" />
 
       {/* Content overlay */}
-      <div className="container mx-auto px-6 relative z-10 flex flex-col-reverse lg:flex-row items-center justify-between min-h-screen pt-20 pb-10">
+      <div className="container mx-auto px-6 relative z-10 flex flex-col-reverse lg:flex-row items-center justify-between min-h-screen pt-20 pb-10 gap-12">
         
         {/* Left Side: Content */}
         <motion.div
@@ -216,8 +191,22 @@ export default function Hero() {
             />
           </div>
 
+          {/* Availability badge */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-[#4ade80]/30 text-sm font-medium text-[#4ade80] mb-8 shadow-[0_0_15px_rgba(74,222,128,0.2)]"
+          >
+            <span className="relative flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#4ade80] opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-[#4ade80]"></span>
+            </span>
+            Available for Fresher Roles & Freelance
+          </motion.div>
+
           <motion.div 
-            className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mt-4"
+            className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 0.8 }}
@@ -229,23 +218,36 @@ export default function Hero() {
               View My Work
             </a>
             <a 
-              href="/Priyanshu_resume.pdf" 
-              download="Priyanshu_Parihar_Resume.pdf"
+              href="/Priyanshu_resume.pdf"
+              target="_blank"
+              rel="noreferrer"
               className="px-8 py-4 rounded-full glass font-semibold text-lg hover:bg-white/10 transition-all transform hover:-translate-y-1 text-white border border-white/20 flex items-center gap-2"
             >
-              ⬇ Download Resume
+              📄 View Resume
             </a>
           </motion.div>
+
+          {/* Small download link below */}
+          <motion.a
+            href="/Priyanshu_resume.pdf"
+            download="Priyanshu_Parihar_Resume.pdf"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.7 }}
+            className="mt-3 text-xs text-gray-500 hover:text-[#00d4ff] transition-colors underline underline-offset-4"
+          >
+            ⬇ Download PDF instead
+          </motion.a>
         </motion.div>
 
-        {/* Right Side: 3D AI Architecture */}
+        {/* Right Side: 3D Terminal */}
         <motion.div 
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
-          className="w-full lg:w-[55%] flex items-center justify-center relative z-10 mb-10 lg:mb-0"
+          className="w-full lg:w-[55%] flex items-center justify-center relative z-10"
         >
-          <HeroRAGPipeline />
+          <HeroTerminal />
         </motion.div>
 
       </div>

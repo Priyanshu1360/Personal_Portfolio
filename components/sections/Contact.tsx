@@ -82,7 +82,7 @@ export default function Contact() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00d4ff] opacity-75"></span>
               <span className="relative inline-flex rounded-full h-3 w-3 bg-[#00d4ff]"></span>
             </span>
-            Currently available for internships & freelance work
+            Currently available for Fresher Roles & Freelance
           </div>
 
           <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white">Let's Connect</h2>
