@@ -1,12 +1,5 @@
-import { generateText } from 'ai';
-import { createGroq } from '@ai-sdk/groq';
-
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
-
-const groq = createGroq({
-  apiKey: process.env.GROQ_API_KEY,
-});
 
 const SYSTEM_PROMPT = `You are a helpful, professional AI assistant for Priyanshu Parihar, an AI/ML Engineer.
 
@@ -14,7 +7,7 @@ Priyanshu's Details:
 - Name: Priyanshu Parihar
 - Role: AI/ML Engineer, LLM Developer, RAG Systems Builder
 - Email: priyanshuparihar207@gmail.com
-- Phone: +9837610363
+- Phone: +919837610363
 - LinkedIn: https://www.linkedin.com/in/priyanshu-parihar-641b3b320
 - GitHub: https://github.com/Priyanshu1360
 
@@ -76,15 +69,36 @@ export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
 
-    const result = await generateText({
-      model: groq('llama-3.3-70b-versatile'),
-      system: SYSTEM_PROMPT,
-      messages,
+    const formattedMessages = [
+      { role: 'system', content: SYSTEM_PROMPT },
+      ...messages
+    ];
+
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${(process.env.GROQ_API_KEY || '').trim()}`
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: formattedMessages
+      })
     });
 
-    return Response.json({ reply: result.text });
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Groq API Error:', errorText);
+      throw new Error(`Groq API returned ${response.status}`);
+    }
+
+    const data = await response.json();
+    const reply = data.choices[0]?.message?.content || "Sorry, I couldn't generate a response.";
+
+    return Response.json({ reply });
   } catch (error: any) {
     console.error('Chat API Error:', error);
     return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
   }
 }
+
