@@ -25,6 +25,16 @@ const projects = [
     demo: "https://pharma-spine-ai.vercel.app/",
     color: "from-[#7b2fff] to-purple-800",
     image: "/medical_ai_new.jpg"
+  },
+  {
+    title: "Self-Correcting RAG Pipeline",
+    category: "Enterprise Knowledge Intelligence System",
+    description: "Architected a self-correcting RAG pipeline with a Grader LLM, cutting hallucination rate from 40% to under 10%. Built an adaptive retrieval loop that rewrites queries and refuses on insufficient evidence, boosting refusal accuracy from 15% to 90%. Implemented post-generation claim verification via cross-encoder re-ranking.",
+    tech: ["LangGraph", "LangChain", "Groq LLMs", "Llama 3", "Mixtral", "Qdrant", "Cross-Encoders", "PyPDF", "Tesseract OCR"],
+    github: "https://github.com/Priyanshu1360",
+    demo: "https://self-correcting-rag-pipeline.vercel.app/",
+    color: "from-[#4ade80] to-emerald-700",
+    image: "/self_correcting_rag.png"
   }
 ];
 

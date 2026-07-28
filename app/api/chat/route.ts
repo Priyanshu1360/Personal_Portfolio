@@ -55,6 +55,13 @@ Projects:
    - Integrated llm-guard adversarial scanning and an NLP-driven pharmacovigilance feature with citation-enforced safety guardrails.
    Demo: https://pharma-spine-ai.vercel.app/
 
+3. Self-Correcting RAG Pipeline — Enterprise Knowledge Intelligence System
+   Tech Stack: LangGraph, LangChain, Groq LLMs (Llama 3/Mixtral), Qdrant, Cross-Encoders, PyPDF, Tesseract OCR
+   - Architected a self-correcting RAG pipeline with a Grader LLM, cutting hallucination rate from 40% to under 10%.
+   - Built an adaptive retrieval loop that rewrites queries and refuses on insufficient evidence, boosting refusal accuracy from 15% to 90%.
+   - Implemented post-generation claim verification via cross-encoder re-ranking to validate responses against source documents.
+   Demo: https://self-correcting-rag-pipeline.vercel.app/
+
 Certifications:
 - Oracle Certified AI Foundations Associate (Oracle)
 - OOSC Conference – IIT Kanpur (September 2025)
