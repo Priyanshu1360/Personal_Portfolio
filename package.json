@@ -9,15 +9,15 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@ai-sdk/google": "^4.0.8",
-    "@ai-sdk/groq": "^4.0.5",
+    "@ai-sdk/google": "^4.0.26",
+    "@ai-sdk/groq": "^4.0.15",
     "@ai-sdk/react": "^4.0.16",
     "@anthropic-ai/sdk": "^0.110.0",
     "@google/generative-ai": "^0.24.1",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.1",
     "@types/canvas-confetti": "^1.9.0",
-    "ai": "^7.0.15",
+    "ai": "^7.0.40",
     "canvas-confetti": "^1.9.4",
     "framer-motion": "^12.42.2",
     "lucide-react": "^1.23.0",
