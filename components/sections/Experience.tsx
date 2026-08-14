@@ -39,7 +39,7 @@ export default function Experience() {
             {/* Timeline Icon */}
             <div className="absolute left-0 md:left-1/2 md:-translate-x-1/2 w-16 h-16 flex items-center justify-center">
               <a 
-                href="/certificate.pdf" 
+                href="/internship_certificate.jpeg" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 title="View Internship Certificate"
