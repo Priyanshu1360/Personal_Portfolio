@@ -38,9 +38,15 @@ export default function Experience() {
 
             {/* Timeline Icon */}
             <div className="absolute left-0 md:left-1/2 md:-translate-x-1/2 w-16 h-16 flex items-center justify-center">
-              <div className="w-12 h-12 rounded-full bg-[#0a0f1e] border-4 border-[#00d4ff] flex items-center justify-center z-10 shadow-[0_0_20px_rgba(0,212,255,0.4)]">
+              <a 
+                href="/certificate.pdf" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                title="View Internship Certificate"
+                className="w-12 h-12 rounded-full bg-[#0a0f1e] border-4 border-[#00d4ff] flex items-center justify-center z-10 shadow-[0_0_20px_rgba(0,212,255,0.4)] hover:scale-110 hover:shadow-[0_0_30px_rgba(0,212,255,0.6)] transition-all cursor-pointer"
+              >
                 <Briefcase size={20} className="text-white" />
-              </div>
+              </a>
             </div>
 
             {/* Right side (Card Content) */}

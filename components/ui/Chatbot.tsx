@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageSquare, X, Send, Bot, User, Loader2, Sparkles, BrainCircuit } from "lucide-react";
+import Image from "next/image";
 
 type Message = {
   role: "user" | "assistant";
@@ -55,50 +56,60 @@ export default function Chatbot() {
     handleSend(q);
   };
 
-  // Render message with bullet points and bold text formatting
+  // Render message with bullet points, bold text formatting, and clickable links
   const renderMessage = (content: string) => {
     const lines = content.split('\n');
     return (
       <div className="space-y-1">
         {lines.map((line, i) => {
+          // Parse links in the line
+          const urlRegex = /(https?:\/\/[^\s]+|mailto:[^\s]+)/g;
+          const lineWithLinks = line.split(urlRegex).map((part, index) => {
+            if (part.match(urlRegex)) {
+              const displayUrl = part.startsWith('mailto:') ? part.replace('mailto:', '') : part;
+              return (
+                <a key={index} href={part} target="_blank" rel="noopener noreferrer" className="text-[#00d4ff] hover:underline break-all">
+                  {displayUrl}
+                </a>
+              );
+            }
+            // Parse bold text **text** within text parts
+            const boldRegex = /\*\*([^*]+)\*\*/g;
+            if (part.includes('**')) {
+              return part.split(boldRegex).map((subPart, j) => 
+                j % 2 === 1 
+                  ? <strong key={j} className="text-[#00d4ff] font-bold">{subPart}</strong> 
+                  : <span key={j}>{subPart}</span>
+              );
+            }
+            return <span key={index}>{part}</span>;
+          });
+
           // Bullet point lines
           if (line.trim().startsWith('- ') || line.trim().startsWith('• ') || line.trim().startsWith('* ')) {
-            const text = line.trim().slice(2);
             return (
               <div key={i} className="flex items-start gap-2">
                 <span className="text-[#00d4ff] mt-1 shrink-0 font-bold">▸</span>
-                <span className="text-white font-medium leading-snug">{text}</span>
+                <span className="text-gray-200 font-medium leading-snug">{lineWithLinks.slice(1)}</span>
               </div>
             );
           }
           // Numbered lines like "1. ..."
           if (/^\d+\.\s/.test(line.trim())) {
             const num = line.trim().match(/^(\d+\.)/)?.[1] ?? '';
-            const text = line.trim().slice(num.length).trim();
+            const rest = lineWithLinks;
             return (
               <div key={i} className="flex items-start gap-2">
                 <span className="text-[#7b2fff] font-bold shrink-0">{num}</span>
-                <span className="text-white font-medium leading-snug">{text}</span>
+                <span className="text-gray-200 font-medium leading-snug">{rest}</span>
               </div>
-            );
-          }
-          // Bold **text** pattern
-          if (line.includes('**')) {
-            const parts = line.split('**');
-            return (
-              <p key={i} className="text-white font-medium leading-relaxed">
-                {parts.map((part, j) =>
-                  j % 2 === 1
-                    ? <strong key={j} className="text-[#00d4ff] font-bold">{part}</strong>
-                    : <span key={j}>{part}</span>
-                )}
-              </p>
             );
           }
           // Empty line = spacer
           if (line.trim() === '') return <div key={i} className="h-1" />;
+          
           // Normal line
-          return <p key={i} className="text-white font-medium leading-relaxed">{line}</p>;
+          return <p key={i} className="text-gray-200 font-medium leading-relaxed">{lineWithLinks}</p>;
         })}
       </div>
     );
@@ -119,8 +130,8 @@ export default function Chatbot() {
             <div className="p-4 bg-[#0a0f1e]/80 border-b border-white/10 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#00d4ff] to-[#7b2fff] p-[1px]">
-                  <div className="w-full h-full bg-[#0a0f1e] rounded-full flex items-center justify-center">
-                    <BrainCircuit size={16} className="text-[#00d4ff]" />
+                  <div className="w-full h-full bg-[#0a0f1e] rounded-full flex items-center justify-center overflow-hidden">
+                    <Image src="/profile.jpg" alt="Priyanshu" width={32} height={32} className="w-full h-full object-cover" />
                   </div>
                 </div>
                 <div>
@@ -144,8 +155,10 @@ export default function Chatbot() {
               {messages.map((msg: Message, idx: number) => (
                 <div key={idx} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} gap-2`}>
                   {msg.role === "assistant" && (
-                    <div className="w-6 h-6 shrink-0 rounded-full bg-gradient-to-tr from-[#00d4ff] to-[#7b2fff] flex items-center justify-center mt-1">
-                      <BrainCircuit size={12} className="text-white" />
+                    <div className="w-7 h-7 shrink-0 rounded-full bg-gradient-to-tr from-[#00d4ff] to-[#7b2fff] p-[1px] mt-1">
+                      <div className="w-full h-full bg-[#0a0f1e] rounded-full overflow-hidden">
+                        <Image src="/profile.jpg" alt="AI" width={28} height={28} className="w-full h-full object-cover" />
+                      </div>
                     </div>
                   )}
                   <div className={`max-w-[80%] rounded-2xl p-3 text-sm ${
@@ -159,8 +172,10 @@ export default function Chatbot() {
               ))}
               {isLoading && (
                 <div className="flex justify-start gap-2">
-                   <div className="w-6 h-6 shrink-0 rounded-full bg-gradient-to-tr from-[#00d4ff] to-[#7b2fff] flex items-center justify-center mt-1">
-                      <BrainCircuit size={12} className="text-white" />
+                   <div className="w-7 h-7 shrink-0 rounded-full bg-gradient-to-tr from-[#00d4ff] to-[#7b2fff] p-[1px] mt-1">
+                      <div className="w-full h-full bg-[#0a0f1e] rounded-full overflow-hidden">
+                        <Image src="/profile.jpg" alt="AI" width={28} height={28} className="w-full h-full object-cover" />
+                      </div>
                     </div>
                   <div className="glass-panel rounded-2xl rounded-tl-sm p-3 text-sm flex items-center gap-2">
                     <Loader2 size={14} className="animate-spin text-[#00d4ff]" />

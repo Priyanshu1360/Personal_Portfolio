@@ -81,7 +81,7 @@ export async function POST(req: Request) {
         'Authorization': `Bearer ${(process.env.GROQ_API_KEY || '').trim()}`
       },
       body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
+        model: 'mixtral-8x7b-32768',
         messages: formattedMessages
       })
     });
